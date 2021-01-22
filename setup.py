@@ -12,6 +12,7 @@ setup(
     packages=["dht_node"],
     package_data={"dht_node": ["py.typed"]},
     python_requires=">=3.7",
+    setup_requires=["setuptools_scm"],
     url="https://github.com/retonato/simple-dht-node",
-    version="1.0.1",
+    use_scm_version=True,
 )
