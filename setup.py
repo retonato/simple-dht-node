@@ -13,5 +13,5 @@ setup(
     package_data={"dht_node": ["py.typed"]},
     python_requires=">=3.7",
     url="https://github.com/retonato/simple-dht-node",
-    version="1.0.0",
+    version="1.0.1",
 )

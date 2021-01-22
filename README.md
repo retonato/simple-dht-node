@@ -1,4 +1,4 @@
-# Modern bencode
+# Simple Bittorent DHT node
 
 A simple Bittorent DHT node.
 
