@@ -1,0 +1,11 @@
+{
+    b"a": {
+        b"id": b"\xaet\x90\xa5\x17\xe0\x93\x01\x17\xe6\xb4G\x89\x01O\xf3K\xa9\xcd^",
+        b"info_hash": b"\x8a\x02\x00{\xab\xbf\xb0\x8az\xea\xff\xaf\x82\x90,\x94\x8fg\x9c\xfd",
+        b"port": 21764,
+        b"token": b""
+    },
+    b"q": b"announce_peer",
+    b"t": b"\xc1a?\xcc;\xb1I\n",
+    b"y": b"q"
+}

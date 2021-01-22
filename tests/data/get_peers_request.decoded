@@ -1,0 +1,9 @@
+{
+    b"a": {
+        b"id": b"\xf2|\xc4\xe7b\x05\x8d\xb0\x12\x7f\x994\xf1\t\xa2\xab7\x0eA\x00",
+        b"info_hash": b"\x86\x15A\xc3\xfa\xa1l\x9fR\xe1EJ\x0bY+\xd3\x08\x12\x9ce"
+    },
+    b"q": b"get_peers",
+    b"t": b"\x9a*",
+    b"y": b"q"
+}
