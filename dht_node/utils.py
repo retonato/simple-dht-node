@@ -3,7 +3,7 @@ import logging
 import os
 import struct
 from ipaddress import ip_address
-from typing import List
+from typing import List, Optional
 
 from .data_structures import Node, StoredNode
 
@@ -59,11 +59,13 @@ def get_message_type(message: dict) -> str:
     return "unknown"
 
 
-def get_node_id(message: dict) -> str:
+def get_node_id(message: dict) -> Optional[str]:
     """Extract DHT node ID from DHT message."""
     if b"a" in message:
         return message[b"a"][b"id"].hex()
-    return message[b"r"][b"id"].hex()
+    if b"r" in message:
+        return message[b"r"][b"id"].hex()
+    return None
 
 
 def is_valid_node(node: Node, base_id: str) -> bool:

@@ -9,6 +9,7 @@ import time
 from datetime import datetime
 from typing import Callable, Optional
 
+# noinspection PyPackageRequirements
 import bencode
 from cachetools import TTLCache
 
@@ -86,7 +87,11 @@ class DHTNode:
                 continue
 
             # Create a node object
-            node = Node(utils.get_node_id(message), node_ip, node_port)
+            node_id = utils.get_node_id(message)
+            if node_id:
+                node = Node(node_id, node_ip, node_port)
+            else:
+                continue
 
             # Skip messages from invalid nodes
             if not utils.is_valid_node(node, self.id):
