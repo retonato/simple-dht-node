@@ -82,10 +82,6 @@ class DHTNode:
             # Get the message type
             msg_type = utils.get_message_type(message)
 
-            # Ignore error messages
-            if msg_type == "error":
-                continue
-
             # Create a node object
             node_id = utils.get_node_id(message)
             if node_id:
