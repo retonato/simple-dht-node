@@ -29,23 +29,19 @@ class MockSocket:
         """Noop"""
 
     def close(self):
-        """Set the "closed" attribute to True (used in "fileno" method)"""
-        self.closed = True
-
-    def fileno(self):
-        """Used to check whether the socket is open or not"""
-        return -1 if self.closed else 1
+        """Noop"""
 
     def recvfrom(self, *_args):
         """Return the predefined message and sender details. If there are no
-        messages [left] - wait until the socket is closed and raise an OSError
+        messages [left] - raise an OSError (timed out)
         """
         if self.messages:
             return self.messages.pop(), ("node_ip", 12345)
 
-        while not self.closed:
-            time.sleep(1)
-        raise OSError()
+        raise OSError("timed out")
+
+    def settimeout(self, *_args):
+        """Noop"""
 
 
 def test_add_message_handler(datadir, monkeypatch):

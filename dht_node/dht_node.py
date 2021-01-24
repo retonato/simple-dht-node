@@ -7,7 +7,7 @@ import socket
 import threading
 import time
 from datetime import datetime
-from typing import Callable, Optional
+from typing import Callable, List, Optional
 
 # noinspection PyPackageRequirements
 import bencode
@@ -32,9 +32,7 @@ class DHTNode:
         self.id = node_id or secrets.token_hex(20)  # pylint: disable=C0103
         self.port = node_port or random.randint(1025, 65535)
 
-        self._blocked_ips = TTLCache(  # type: ignore
-            maxsize=1000, ttl=3600 * 24
-        )
+        self._blocked_ips: TTLCache = TTLCache(maxsize=1000, ttl=3600 * 24)
         self._handlers = {
             "all": (self._save_node,),
             "announce_peer_request": [self._on_announce_peer_request],
@@ -54,6 +52,7 @@ class DHTNode:
         self._routing_table = RoutingTable(base_id=self.id)
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._stop_requested = threading.Event()
+        self._threads: List[threading.Thread] = []
 
     def _process_messages(self):
         """Function, which processes incoming messages"""
@@ -63,7 +62,7 @@ class DHTNode:
                 msg_raw, (node_ip, node_port) = self._socket.recvfrom(65535)
                 self.counters["messages_in"].increment()
             except OSError as err:
-                if self._socket.fileno() > 0:
+                if "timed out" not in str(err):
                     logging.error("Cannot receive message, error: %s", err)
                 continue
 
@@ -106,9 +105,8 @@ class DHTNode:
                     )
                     continue
 
-        # Close the socket, if it is still open
-        if self._socket.fileno() > 0:
-            self._socket.close()
+        # Close the socket
+        self._socket.close()
 
     # Message handlers
     def _on_announce_peer_request(self, message: dict, node: Node):
@@ -303,20 +301,26 @@ class DHTNode:
         """Start DHT node"""
         # Bind a socket
         logging.info("Starting node %s at port %s", self.id, self.port)
+        self._socket.settimeout(1)
         self._socket.bind(("0.0.0.0", self.port))
 
         # Start a message processor
-        threading.Thread(target=self._process_messages).start()
+        pm_thread = threading.Thread(target=self._process_messages)
+        self._threads.append(pm_thread)
+        pm_thread.start()
 
         # Create and maintain a routing table
-        threading.Thread(target=self._maintain_routing_table).start()
+        mrt_thread = threading.Thread(target=self._maintain_routing_table)
+        self._threads.append(mrt_thread)
+        mrt_thread.start()
 
     def stop(self):
         """Stop DHT node"""
         # Notify all threads that they should finish
         logging.info("SIGINT received, stopping node %s", self.id)
         self._stop_requested.set()
-        time.sleep(1)
 
-        # Close ths socket, if it is still open
-        self._socket.close()
+        # Wait for all threads to finish
+        while [t for t in self._threads if t.is_alive()]:
+            logging.info("Waiting for node %s to finish", self.id)
+            time.sleep(1)
