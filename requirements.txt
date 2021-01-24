@@ -1,3 +1,5 @@
+cachetools
+modern-bencode
 setuptools
 twine
 wheel
