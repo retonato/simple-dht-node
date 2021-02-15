@@ -1,6 +1,6 @@
 # Simple Bittorent DHT node
 
-A simple Bittorent DHT node.
+A simple Bittorent DHT node. Better documentation is coming soon.
 
 ## Installation
 ```
