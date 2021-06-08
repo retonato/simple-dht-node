@@ -19,7 +19,7 @@ def create_compact_node_info(nodes: List[StoredNode]) -> bytes:
 
 
 def get_message_type(message: dict) -> str:
-    """TBA"""
+    """Return message type (or "unknown" if message type is unknown)"""
     # pylint: disable=too-many-return-statements
     # Request messages
     if message.get(b"y") == b"q":
@@ -89,7 +89,7 @@ def is_valid_node(node: Node, base_id: str) -> bool:
 
 
 def log_stats(*nodes):
-    """TBA"""
+    """Log some runtime details for the given nodes"""
     # Log the progress
     logging.info(
         "%s nodes, %s messages in, %s messages out",

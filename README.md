@@ -1,7 +1,6 @@
-# Simple Bittorent DHT node
+# Simple Bittorrent DHT node
 
-A simple Bittorent DHT node. I use it primarily for getting information from  
-the DHT network, but it can be used for any related purpose. Just works.
+A simple Bittorrent DHT node. I use it primarily for getting information from the DHT network, but it can be used for any related purpose. Just works.
 
 ## Installation
 ```
@@ -11,8 +10,7 @@ The library requires Python >= 3.7
 
 ## Usage
 
-Minimal working code (start a single DHT node with a random ID on a random port  
-in 1025-65535 range, then stop it):
+Minimal working code (start a single DHT node with a random ID on a random port in 1025-65535 range, then stop it):
 
 ```python
 from dht_node import DHTNode
@@ -35,8 +33,7 @@ my_node.start()
 my_node.stop()
 ```
 
-You can start multiple nodes (a regular virtual server with 1 CPU and 1GB RAM  
-can handle up to 25-50 nodes):
+You can start multiple nodes (a regular virtual server with 1 CPU and 1GB RAM can handle up to 25-50 nodes):
 
 ```python
 from dht_node import DHTNode
@@ -51,10 +48,7 @@ for node in my_nodes:
     node.stop()
 ```
 
-You can log node statistics (number of active nodes, number of incoming messages,  
-number of outgoing messages). Message number is set to 0 on each function call  
-(so, if you call it every minute - you will receive data for the last minute,  
-every 5 minutes - for the last 5 minutes, and so on):
+You can log node statistics (number of active nodes, number of incoming messages, number of outgoing messages). Message number is set to 0 on each function call (so, if you call it every minute - you will receive data for the last minute, every 5 minutes - for the last 5 minutes, and so on):
 
 ```python
 import logging
@@ -76,9 +70,7 @@ for _ in range(5):
 my_node.stop()
 ```
 
-You can add one or more message handlers (for example to save some information  
-from the messages). Those functions will be called on each incoming message  
-(get 2 arguments, message and a sender node info):
+You can add one or more message handlers (for example to save some information from the messages). Those functions will be called on each incoming message (get 2 arguments, message and a sender node info):
 
 ```python
 import time
@@ -96,10 +88,7 @@ time.sleep(30)
 my_node.stop()
 ```
 
-Finally, you can send messages (check 
-[the source code](https://github.com/retonato/simple-dht-node/blob/master/dht_node/dht_node.py) 
-and [BEP5](http://bittorrent.org/beps/bep_0005.html) for message  
-format and examples):
+Finally, you can send messages (check [the source code](https://github.com/retonato/simple-dht-node/blob/master/dht_node/dht_node.py) and [BEP5](http://bittorrent.org/beps/bep_0005.html) for message format and examples):
 
 ```python
 import os
@@ -122,21 +111,12 @@ my_node.stop()
 
 ## Common problems
 
-Usually it takes up to 15-30 minutes for node to start receiving a stable stream  
-of messages from other DHT nodes (that's just how DHT network works, it takes  
-some time for other nodes to get information about your node).
+Usually it takes up to 15-30 minutes for node to start receiving a stable stream of messages from other DHT nodes (that's just how DHT network works, it takes some time for other nodes to get information about your node).
 
-It might take an additional day or so until the node is up-to-speed (=most  
-nearby nodes in the DHT network have its info in their routing tables). You  
-can expect a few hundred incoming messages per minute for each node.
+It might take an additional day or so until the node is up-to-speed (=most nearby nodes in the DHT network have its info in their routing tables). You can expect a few hundred incoming messages per minute for each node.
 
-If you started the node and there are no incoming messages at all - other  
-nodes cannot reach you, you are either behind NAT or a firewall. If you are  
-behind NAT - you need to enable port forwarding on your router. If you have  
-a firewall enabled - you need to allow your node UDP port there.
+If you started the node and there are no incoming messages at all - other nodes cannot reach you, you are either behind NAT or a firewall. If you are behind NAT - you need to enable port forwarding on your router. If you have a firewall enabled - you need to allow your node UDP port there.
 
 ## Bugs
 
-Feel free to create an issue [here](https://github.com/retonato/simple-dht-node/issues)
-if you find a bug or some error message  
-is not clear enough.
+Feel free to create an issue [here](https://github.com/retonato/simple-dht-node/issues) if you find a bug or some error message is not clear enough.

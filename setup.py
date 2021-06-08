@@ -5,6 +5,7 @@ with open("README.md", "r") as desc_file:
     long_description = desc_file.read()
 
 setup(
+    description="A simple Bittorrent DHT node",
     install_requires=["cachetools", "modern-bencode"],
     long_description=long_description,
     long_description_content_type="text/markdown",

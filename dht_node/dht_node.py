@@ -110,7 +110,7 @@ class DHTNode:
 
     # Message handlers
     def _on_announce_peer_request(self, message: dict, node: Node):
-        """TBA"""
+        """Process announce_peer query"""
         # Save peer to the routing table
         if message[b"a"].get(b"implied_port", 0):
             port = node.port
@@ -138,7 +138,7 @@ class DHTNode:
         )
 
     def _on_get_peers_request(self, message: dict, node: Node):
-        """TBA"""
+        """Process get_peers query"""
         # Prepare and send the response
         peers = self._routing_table.get_peers(
             message[b"a"][b"info_hash"].hex()
@@ -178,7 +178,7 @@ class DHTNode:
             )
 
     def _on_find_node_request(self, message: dict, node: Node):
-        """TBA"""
+        """Process find_node query"""
         # Prepare and send the response
         closest_nodes = self._routing_table.get_closest_nodes(
             message[b"a"][b"target"].hex()
@@ -197,7 +197,7 @@ class DHTNode:
         )
 
     def _on_find_node_response(self, message: dict, _node: Node):
-        """TBA"""
+        """Process find_node response"""
         for node in utils.parse_compact_node_info(message[b"r"][b"nodes"]):
             # Skip invalid nodes
             if not utils.is_valid_node(node, self.id):
@@ -208,7 +208,7 @@ class DHTNode:
             self._routing_table.save_node(node)
 
     def _on_ping_request(self, message: dict, node: Node):
-        """TBA"""
+        """Process ping query"""
         # Prepare and send the response
         self.send_message(
             {
@@ -273,16 +273,16 @@ class DHTNode:
                 )
 
     def _save_node(self, _message: dict, node: Node):
-        """TBA"""
+        """Save node to the routing table"""
         self._routing_table.save_node(node, communicated=datetime.now())
 
     # Public methods
     def add_message_handler(self, fn_: Callable) -> None:
-        """TBA"""
+        """Add a handler, which will be called on each incoming message"""
         self._handlers["all"] = self._handlers["all"] + (fn_,)  # type: ignore
 
     def send_message(self, message: dict, node_ip: str, node_port: int):
-        """TBA"""
+        """Send the given message to the given node"""
         with self._lock:
             try:
                 self._socket.sendto(
