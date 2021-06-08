@@ -49,6 +49,7 @@ class DHTNode:
             "vote": [],  # no action here
         }
         self._lock = threading.Lock()
+        self._node_activity: TTLCache = TTLCache(maxsize=100000, ttl=3600)
         self._routing_table = RoutingTable(base_id=self.id)
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._stop_requested = threading.Event()
@@ -90,6 +91,11 @@ class DHTNode:
 
             # Skip messages from invalid nodes
             if not utils.is_valid_node(node, self.id):
+                self._blocked_ips[node.ip] = datetime.now()
+                continue
+
+            # Skip messages from scraper nodes
+            if utils.is_scraper_node(node, self._node_activity):
                 self._blocked_ips[node.ip] = datetime.now()
                 continue
 

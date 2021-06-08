@@ -5,7 +5,9 @@ import struct
 from ipaddress import ip_address
 from typing import List, Optional
 
-from .data_structures import Node, StoredNode
+from cachetools import TTLCache
+
+from .data_structures import Counter, Node, StoredNode
 
 
 def calculate_distance(id_1: str, id_2: str) -> int:
@@ -68,8 +70,24 @@ def get_node_id(message: dict) -> Optional[str]:
     return None
 
 
+def is_scraper_node(node: Node, node_activity: TTLCache) -> bool:
+    """Return True if node seems to be a scraper node, False otherwise"""
+    try:
+        node_activity[node.ip].increment()
+        messages_per_hour = node_activity[node.ip].value
+    except KeyError:
+        node_activity[node.ip] = Counter()
+        messages_per_hour = 0
+
+    if messages_per_hour > 3600:
+        logging.debug("Node is too active, ip %s", node.ip)
+        return True
+
+    return False
+
+
 def is_valid_node(node: Node, base_id: str) -> bool:
-    """TBA"""
+    """Return True if node seems to be a genuine one, False otherwise"""
     if node.ip == "0.0.0.0":
         logging.debug("Invalid node, ip %s", node.ip)
         return False

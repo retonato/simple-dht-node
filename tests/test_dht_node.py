@@ -108,6 +108,23 @@ def test_announce_peer_request(datadir, monkeypatch):
     )
 
 
+def test_blocked_node_too_active(datadir, monkeypatch):
+    """Check that a node is blocked if it is too active"""
+    message = open(datadir["ping_request.krpc"], "rb").read()
+    mock_socket = MockSocket(messages=[message] * 4000)
+    monkeypatch.setattr(
+        dht_node.socket,
+        "socket",
+        Mock(return_value=mock_socket),
+    )
+
+    my_node = DHTNode(node_id="a" * 40)
+    my_node.start()
+    time.sleep(1)
+    assert "node_ip" in my_node._blocked_ips
+    my_node.stop()
+
+
 def test_blocked_node_too_close(monkeypatch):
     """Check that a node is blocked if it is too close"""
     invalid_node_id = "a" * 36 + "b" * 4
