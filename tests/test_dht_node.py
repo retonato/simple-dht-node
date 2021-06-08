@@ -19,10 +19,12 @@ class MockSocket:
         returned by "recvfrom" method one by one
     """
 
-    def __init__(self, messages=None):
+    def __init__(self, messages=None, sender_ip="node_ip", sender_port=12345):
         """Called when the socket is created, sets its attributes"""
         self.closed = False
         self.messages = messages if messages else []
+        self.sender_ip = sender_ip
+        self.sender_port = sender_port
         self.sendto = Mock()
 
     def bind(self, *_args):
@@ -36,7 +38,7 @@ class MockSocket:
         messages [left] - raise an OSError (timed out)
         """
         if self.messages:
-            return self.messages.pop(), ("node_ip", 12345)
+            return self.messages.pop(), (self.sender_ip, self.sender_port)
 
         raise OSError("timed out")
 
@@ -143,6 +145,40 @@ def test_blocked_node_wrong_id(monkeypatch):
         }
     )
     mock_socket = MockSocket(messages=[test_message])
+    monkeypatch.setattr(
+        dht_node.socket,
+        "socket",
+        Mock(return_value=mock_socket),
+    )
+
+    my_node = DHTNode(node_id="a" * 40)
+    my_node.start()
+    time.sleep(1)
+    assert "node_ip" in my_node._blocked_ips
+    my_node.stop()
+
+
+def test_blocked_node_wrong_ip(datadir, monkeypatch):
+    """Check that a node is blocked if it has a wrong ip (0.0.0.0)"""
+    messages = [open(datadir["ping_request.krpc"], "rb").read()]
+    mock_socket = MockSocket(messages=messages, sender_ip="0.0.0.0")
+    monkeypatch.setattr(
+        dht_node.socket,
+        "socket",
+        Mock(return_value=mock_socket),
+    )
+
+    my_node = DHTNode(node_id="a" * 40)
+    my_node.start()
+    time.sleep(1)
+    assert "0.0.0.0" in my_node._blocked_ips
+    my_node.stop()
+
+
+def test_blocked_node_wrong_port(datadir, monkeypatch):
+    """Check that a node is blocked if it has a wrong port"""
+    messages = [open(datadir["ping_request.krpc"], "rb").read()]
+    mock_socket = MockSocket(messages=messages, sender_port=0)
     monkeypatch.setattr(
         dht_node.socket,
         "socket",
@@ -277,8 +313,10 @@ def test_get_peers_request_present(datadir, monkeypatch):
         "find_node_request.krpc",
         "find_node_response.krpc",
         "get_peers_request.krpc",
+        "get_peers_response.krpc",
         "ping_request.krpc",
         "ping_response.krpc",
+        "sample_infohashes_request.krpc",
         "vote.krpc",
     ],
 )
@@ -303,6 +341,7 @@ def test_valid_messages(capsys, datadir, msg_name, monkeypatch):
     "msg_name,log_output",
     [
         ("invalid_message.krpc", "cannot decode"),
+        ("unknown_message_type.krpc", "unexpected message type"),
         ("unknown_request_type.krpc", "unexpected request type"),
         ("unknown_response_type.krpc", "unexpected response type"),
     ],

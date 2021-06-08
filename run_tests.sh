@@ -4,7 +4,7 @@
 set -e
 
 coverage run --branch --omit=tests/*,venv/* -m pytest -p no:cacheprovider tests
-coverage report --fail-under=90 --show-missing --skip-covered
+coverage report --fail-under=95 --show-missing --skip-covered
 
 echo "--Black--"
 black --diff --line-length=79 dht_node tests setup.py

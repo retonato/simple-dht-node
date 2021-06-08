@@ -80,11 +80,10 @@ def is_valid_node(node: Node, base_id: str) -> bool:
         logging.debug("Invalid node, id %s", node.id)
         return False
 
-    if node.id != base_id:
-        node_distance = calculate_distance(node.id, base_id)
-        if node_distance < 30:
-            logging.debug("Invalid node, distance %s", node_distance)
-            return False
+    node_distance = calculate_distance(node.id, base_id)
+    if node.id != base_id and node_distance < 30:
+        logging.debug("Invalid node, distance %s", node_distance)
+        return False
 
     return True
 
