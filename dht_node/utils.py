@@ -79,7 +79,7 @@ def is_scraper_node(node: Node, node_activity: TTLCache) -> bool:
         node_activity[node.id] = Counter()
         messages_so_far = 1
 
-    if messages_so_far > 900:
+    if messages_so_far > 15:
         logging.debug("Node is too active, id %s", node.id)
         return True
 
