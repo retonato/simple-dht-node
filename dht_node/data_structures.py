@@ -52,15 +52,15 @@ class StoredNode(Node):
 
     @property
     def is_questionable(self):
-        """Nodes, which communicated > 5 minutes ago, are questionable"""
+        """Nodes, which communicated > 15 minutes ago, are questionable"""
         start_time = self.communicated or self.added
-        return datetime.now() > (start_time + timedelta(minutes=5))
+        return datetime.now() > (start_time + timedelta(minutes=15))
 
     @property
     def is_unresponsive(self):
-        """Nodes, which communicated > 15 minutes ago, are unresponsive"""
+        """Nodes, which communicated > 20 minutes ago, are unresponsive"""
         start_time = self.communicated or self.added
-        return datetime.now() > (start_time + timedelta(minutes=15))
+        return datetime.now() > (start_time + timedelta(minutes=20))
 
 
 # Other

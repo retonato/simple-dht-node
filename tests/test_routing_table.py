@@ -18,25 +18,25 @@ def test_delete_unresponsive_nodes():
     assert not stored_node.is_questionable
     assert not stored_node.is_unresponsive
 
-    # The communication time is updated, it is less than 5 minutes ago
-    time_minus_1 = datetime.now() - timedelta(minutes=1)
-    table.save_node(node, communicated=time_minus_1)
+    # The communication time is updated, it is less than 15 minutes ago
+    time_minus_10 = datetime.now() - timedelta(minutes=10)
+    table.save_node(node, communicated=time_minus_10)
     table.delete_unresponsive_nodes()
     stored_node = table.get_all_nodes()[0]
     assert not stored_node.is_questionable
     assert not stored_node.is_unresponsive
 
-    # The communication time is updated, it is between 5 and 15 minutes ago
-    time_minus_10 = datetime.now() - timedelta(minutes=10)
-    table.save_node(node, communicated=time_minus_10)
+    # The communication time is updated, it is between 15 and 20 minutes ago
+    time_minus_17 = datetime.now() - timedelta(minutes=17)
+    table.save_node(node, communicated=time_minus_17)
     table.delete_unresponsive_nodes()
     stored_node = table.get_all_nodes()[0]
     assert stored_node.is_questionable
     assert not stored_node.is_unresponsive
 
-    # The communication time is updated, it is more than 15 minutes ago
-    time_minus_20 = datetime.now() - timedelta(minutes=20)
-    table.save_node(node, communicated=time_minus_20)
+    # The communication time is updated, it is more than 20 minutes ago
+    time_minus_25 = datetime.now() - timedelta(minutes=25)
+    table.save_node(node, communicated=time_minus_25)
     table.delete_unresponsive_nodes()
     assert len(table.get_all_nodes()) == 0
 
