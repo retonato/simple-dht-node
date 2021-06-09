@@ -4,6 +4,8 @@ from dataclasses import asdict
 from datetime import datetime
 from typing import List, Optional
 
+from cachetools import TTLCache
+
 from dht_node.data_structures import Node, Peer, StoredNode
 from dht_node.utils import calculate_distance
 
@@ -45,9 +47,8 @@ class RoutingTable:
 
         with self._lock:
             for node in self._nodes.values():
-                for peer in node.peers:
-                    if peer.info_hash == info_hash:
-                        found_peers.append(peer)
+                if node.peers.get(info_hash):
+                    found_peers.append(node.peers.get(info_hash))
 
         return found_peers
 
@@ -71,7 +72,7 @@ class RoutingTable:
                             added=datetime.now(),
                             communicated=communicated,
                             distance=distance,
-                            peers=set(),
+                            peers=TTLCache(maxsize=1000, ttl=3600 * 24),
                             **asdict(node),
                         )
 
@@ -79,4 +80,4 @@ class RoutingTable:
         """Save peer to the routing table"""
         with self._lock:
             if node_id in self._nodes:
-                self._nodes[node_id].peers.add(peer)
+                self._nodes[node_id].peers[peer.info_hash] = peer

@@ -3,7 +3,9 @@ import struct
 import threading
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Optional, Set
+from typing import Optional
+
+from cachetools import TTLCache
 
 
 @dataclass
@@ -33,9 +35,6 @@ class Peer:
     ip: str  # pylint: disable=invalid-name
     port: int
 
-    def __hash__(self):
-        return hash(self.info_hash + self.ip + str(self.port))
-
     @property
     def compact_info(self):
         """Compact peer info, as described in BEP 5"""
@@ -49,7 +48,7 @@ class StoredNode(Node):
     added: datetime
     communicated: Optional[datetime]
     distance: int
-    peers: Set[Peer]
+    peers: TTLCache
 
     @property
     def is_questionable(self):
