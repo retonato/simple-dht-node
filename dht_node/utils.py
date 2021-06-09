@@ -73,14 +73,14 @@ def get_node_id(message: dict) -> Optional[str]:
 def is_scraper_node(node: Node, node_activity: TTLCache) -> bool:
     """Return True if node seems to be a scraper node, False otherwise"""
     try:
-        node_activity[node.ip].increment()
-        messages_so_far = node_activity[node.ip].value
+        node_activity[node.id].increment()
+        messages_so_far = node_activity[node.id].value
     except KeyError:
-        node_activity[node.ip] = Counter()
+        node_activity[node.id] = Counter()
         messages_so_far = 1
 
     if messages_so_far > 900:
-        logging.debug("Node is too active, ip %s", node.ip)
+        logging.debug("Node is too active, id %s", node.id)
         return True
 
     return False
