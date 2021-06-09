@@ -49,7 +49,7 @@ class DHTNode:
             "vote": [],  # no action here
         }
         self._lock = threading.Lock()
-        self._node_activity: TTLCache = TTLCache(maxsize=100000, ttl=3600)
+        self._node_activity: TTLCache = TTLCache(maxsize=1000, ttl=900)
         self._routing_table = RoutingTable(base_id=self.id)
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._stop_requested = threading.Event()

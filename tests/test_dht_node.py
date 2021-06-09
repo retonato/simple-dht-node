@@ -111,7 +111,7 @@ def test_announce_peer_request(datadir, monkeypatch):
 def test_blocked_node_too_active(datadir, monkeypatch):
     """Check that a node is blocked if it is too active"""
     message = open(datadir["ping_request.krpc"], "rb").read()
-    mock_socket = MockSocket(messages=[message] * 4000)
+    mock_socket = MockSocket(messages=[message] * 1000)
     monkeypatch.setattr(
         dht_node.socket,
         "socket",

@@ -74,12 +74,12 @@ def is_scraper_node(node: Node, node_activity: TTLCache) -> bool:
     """Return True if node seems to be a scraper node, False otherwise"""
     try:
         node_activity[node.ip].increment()
-        messages_per_hour = node_activity[node.ip].value
+        messages_so_far = node_activity[node.ip].value
     except KeyError:
         node_activity[node.ip] = Counter()
-        messages_per_hour = 0
+        messages_so_far = 1
 
-    if messages_per_hour > 3600:
+    if messages_so_far > 900:
         logging.debug("Node is too active, ip %s", node.ip)
         return True
 
